@@ -1,8 +1,5 @@
 import { OdinClient } from '@4players/odin';
 
-export const initializeOdin = () => {
-  
-}
 
 export const startOdin = async function (token) {
   try {
@@ -34,9 +31,13 @@ export const startOdin = async function (token) {
 
     // Handle events for media activity (e.g. someone starts/stops talking)
     odinRoom.addEventListener('MediaActivity', (event) => {
-      console.log(`Peer ${event.payload.peer.id} ${event.payload.active ? 'started' : 'stopped'} talking on media ${event.payload.media.id}`);
-      event.payload.media.start()
+      console.log(`Media ${event.payload.media.id} activity updated:`, event.payload.media.active);
     });
+
+    odinRoom.addEventListener('MessageReceived', (event) => {
+      console.log(`Received data from peer ${event.payload.senderId}:`, event.payload.message);
+    });
+  
 
     // Join the room
     await odinRoom.join();

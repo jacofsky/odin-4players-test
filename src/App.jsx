@@ -13,7 +13,7 @@ function App() {
 
   const connectOdin = async() => {
     let token = await generateToken(user)
-    startOdin(token)
+    await startOdin(token)
     setConnect(true)
   }
   
