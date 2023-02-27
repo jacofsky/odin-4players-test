@@ -41,20 +41,13 @@ export const startOdin = async function (token) {
     await odinRoom.join();
 
     // Create a new audio stream for the default capture device and append it to the room
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: {
-          echoCancellation: true,
-          autoGainControl: true,
-          noiseSuppression: true,
-          sampleRate: 48000,
-        },
-      })
-      .then((mediaStream) => {
-        odinRoom.createMedia(mediaStream);
-      });
-      odinRoom.changeVolume(2)
-      odinRoom.enableVolumeGate()
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(async (mediaStream) => {
+      odinRoom.createMedia(mediaStream);
+      // The mic is enabled, and the media object is created, but it's muted, i.e. not sending data.
+      // Start the media stream to unmute the user:
+      await mediaStream.start();
+    });
+  
       
   } catch (e) {
     console.error('Something went wrong', e);
