@@ -35,19 +35,25 @@ export const startOdin = async function (token) {
     // Handle events for media activity (e.g. someone starts/stops talking)
     odinRoom.addEventListener('MediaActivity', (event) => {
       console.log(`Peer ${event.payload.peer.id} ${event.payload.active ? 'started' : 'stopped'} talking on media ${event.payload.media.id}`);
+      event.payload.media.start()
     });
 
     // Join the room
     await odinRoom.join();
 
     // Create a new audio stream for the default capture device and append it to the room
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(async (mediaStream) => {
-      odinRoom.createMedia(mediaStream);
-      // The mic is enabled, and the media object is created, but it's muted, i.e. not sending data.
-      // Start the media stream to unmute the user:
-      await mediaStream.start();
-    });
-  
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          echoCancellation: true,
+          autoGainControl: true,
+          noiseSuppression: true,
+          sampleRate: 48000,
+        },
+      })
+      .then((mediaStream) => {
+        odinRoom.createMedia(mediaStream);
+      });
       
   } catch (e) {
     console.error('Something went wrong', e);
